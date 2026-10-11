@@ -10,8 +10,13 @@ export async function api(path, options = {}) {
     headers: customHeaders = {},
   } = options;
 
-  const normalizedPath = `/${String(path).replace(/^\/+/, "")}`;
-  const requestUrl = new URL(normalizedPath, `${API_URL}/`).toString();
+  // The backend mounts its routes under /api.
+  const cleanPath = String(path).replace(/^\/+/, "");
+  const apiPath = cleanPath.startsWith("api/")
+    ? cleanPath
+    : `api/${cleanPath}`;
+
+  const requestUrl = `${API_URL}/${apiPath}`;
 
   const headers = {
     Accept: "application/json",
@@ -49,10 +54,13 @@ export async function api(path, options = {}) {
     : await response.text();
 
   if (!response.ok) {
-    throw new Error(
+    const message =
       typeof data === "object" && data !== null
-        ? data.message || data.error || `HTTP ${response.status}`
-        : data || `HTTP ${response.status}`
+        ? data.message || data.error
+        : data;
+
+    throw new Error(
+      message || `Request failed with status ${response.status}`
     );
   }
 
