@@ -11,3 +11,4 @@ const shortUrlSchema = new mongoose.Schema(
 );
 
 export default mongoose.model("ShortUrl", shortUrlSchema);
+// mohit
