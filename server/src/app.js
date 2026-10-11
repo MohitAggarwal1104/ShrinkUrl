@@ -5,12 +5,18 @@ import urlRoutes from "./routes/urls.js";
 import ShortUrl from "./models/ShortUrl.js";
 
 const app = express();
+const allowedOrigins = [
+  "https://shrink-url-7ja5.vercel.app",
+  "http://localhost:5173",
+];
 
-app.use(cors({
-  origin: process.env.CLIENT_URL || "https://shrink-url-7ja5.vercel.app",
-  methods: ["GET", "POST", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json({ limit: "20kb" }));
 
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
