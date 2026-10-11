@@ -67,14 +67,3 @@ export async function api(path, options = {}) {
 
   return data;
 }
-
-// Required by LinkCard.jsx to generate public short links.
-export function shortUrl(code) {
-  const normalizedCode = String(code ?? "").trim();
-
-  if (!normalizedCode) {
-    return "";
-  }
-
-  return `${API_URL}/${encodeURIComponent(normalizedCode)}`;
-}
