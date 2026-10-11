@@ -38,7 +38,7 @@ app.use(async (req, res, next) => {
 });
 
 // Health check
-app.get("/", (_req, res) => {
+app.get("/api/health", (_req, res) => {
   res.json({
     status: "ok",
     database:
