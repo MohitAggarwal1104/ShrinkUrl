@@ -10,7 +10,6 @@ export async function api(path, options = {}) {
     headers: customHeaders = {},
   } = options;
 
-  // The backend mounts its routes under /api.
   const cleanPath = String(path).replace(/^\/+/, "");
   const apiPath = cleanPath.startsWith("api/")
     ? cleanPath
@@ -65,4 +64,8 @@ export async function api(path, options = {}) {
   }
 
   return data;
+}
+
+export function shortUrl(code) {
+  return `${API_URL}/${encodeURIComponent(code)}`;
 }
