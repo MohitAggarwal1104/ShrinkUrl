@@ -1,12 +1,17 @@
 const API_URL = (
-  "shrink-url-six.vercel.app"
+  import.meta.env.VITE_SERVER_URL || "http://localhost:5000"
 ).replace(/\/+$/, "");
 
 export async function api(path, options = {}) {
-  const { token, method = "GET", body, headers: customHeaders = {} } = options;
+  const {
+    token,
+    method = "GET",
+    body,
+    headers: customHeaders = {},
+  } = options;
 
-  // Keep API paths relative to the backend base URL.
   const normalizedPath = `/${String(path).replace(/^\/+/, "")}`;
+  const requestUrl = new URL(normalizedPath, `${API_URL}/`).toString();
 
   const headers = {
     Accept: "application/json",
@@ -24,7 +29,7 @@ export async function api(path, options = {}) {
   let response;
 
   try {
-    response = await fetch(`${API_URL}${normalizedPath}`, {
+    response = await fetch(requestUrl, {
       method,
       headers,
       body:
