@@ -1,16 +1,39 @@
 import "dotenv/config";
 import app from "./app.js";
 import dns from "node:dns";
-
-dns.setServers(["8.8.8.8"]);
+import mongoose from "mongoose";
 import { connectDB } from "./config/db.js";
 
-const port = Number(process.env.PORT || 5000);
+dns.setServers(["8.8.8.8"]);
 
-try {
-  await connectDB();
-  app.listen(port, () => console.log(`LinkLite API running at http://localhost:${port}`));
-} catch (error) {
-  console.error("Failed to start server:", error.message);
-  process.exit(1);
+let connectionPromise;
+
+async function initializeDatabase() {
+  if (mongoose.connection.readyState === 1) {
+    return;
+  }
+
+  if (!connectionPromise) {
+    connectionPromise = connectDB().catch((error) => {
+      connectionPromise = null;
+      throw error;
+    });
+  }
+
+  await connectionPromise;
 }
+
+app.use(async (req, res, next) => {
+  try {
+    await initializeDatabase();
+    next();
+  } catch (error) {
+    console.error("MongoDB connection failed:", error.message);
+
+    res.status(503).json({
+      message: "Database unavailable. Please try again later.",
+    });
+  }
+});
+
+export default app;
