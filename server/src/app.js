@@ -7,7 +7,7 @@ import ShortUrl from "./models/ShortUrl.js";
 const app = express();
 
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  origin: process.env.CLIENT_URL || "https://shrink-url-7ja5.vercel.app",
   methods: ["GET", "POST", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
