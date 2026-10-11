@@ -23,6 +23,7 @@ async function initializeDatabase() {
   await connectionPromise;
 }
 
+// Ensure MongoDB is connected before handling API requests.
 app.use(async (req, res, next) => {
   try {
     await initializeDatabase();
@@ -35,5 +36,20 @@ app.use(async (req, res, next) => {
     });
   }
 });
+
+// Health check
+app.get("/", (_req, res) => {
+  res.json({
+    status: "ok",
+    database:
+      mongoose.connection.readyState === 1
+        ? "connected"
+        : "disconnected",
+  });
+});
+
+// API routes are already mounted in app.js:
+// /api/auth
+// /api/urls
 
 export default app;
