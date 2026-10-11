@@ -10,7 +10,9 @@ export async function api(path, options = {}) {
     headers: customHeaders = {},
   } = options;
 
+  // Remove leading slashes and prevent duplicate /api prefixes.
   const cleanPath = String(path).replace(/^\/+/, "");
+
   const apiPath = cleanPath.startsWith("api/")
     ? cleanPath
     : `api/${cleanPath}`;
@@ -44,10 +46,13 @@ export async function api(path, options = {}) {
             : JSON.stringify(body),
     });
   } catch {
-    throw new Error("Unable to connect to the backend.");
+    throw new Error(
+      "Unable to connect to the backend. Check your internet connection and backend deployment."
+    );
   }
 
   const contentType = response.headers.get("content-type") || "";
+
   const data = contentType.includes("application/json")
     ? await response.json()
     : await response.text();
@@ -67,5 +72,11 @@ export async function api(path, options = {}) {
 }
 
 export function shortUrl(code) {
-  return `${API_URL}/${encodeURIComponent(code)}`;
+  const normalizedCode = String(code ?? "").trim();
+
+  if (!normalizedCode) {
+    return "";
+  }
+
+  return `${API_URL}/${encodeURIComponent(normalizedCode)}`;
 }
